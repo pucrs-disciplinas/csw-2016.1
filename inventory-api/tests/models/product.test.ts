@@ -17,7 +17,7 @@ describe("productInputSchema", () => {
   });
 
   it("valida um produto sem descrição (campo opcional)", () => {
-    const { description, ...withoutDesc } = validInput;
+    const { ...withoutDesc } = validInput;
     const result = productInputSchema.safeParse(withoutDesc);
     expect(result.success).toBe(true);
   });
