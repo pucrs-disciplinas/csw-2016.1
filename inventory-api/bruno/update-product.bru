@@ -1,0 +1,27 @@
+meta {
+  name: Atualizar Produto
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/products/:productId
+  body: json
+  auth: none
+}
+
+params:path {
+  productId: 
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "price": 3699.9,
+    "stock": 10,
+    "description": "Preco promocional por tempo limitado"
+  }
+}

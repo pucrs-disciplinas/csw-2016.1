@@ -1,0 +1,27 @@
+meta {
+  name: Criar Produto
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/products
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Placa de Video RTX 4070",
+    "sku": "GPU-RTX4070-12GB",
+    "brand": "NVIDIA",
+    "category": "GPU",
+    "price": 3899.9,
+    "stock": 8,
+    "description": "Placa de video para jogos em 1440p"
+  }
+}
