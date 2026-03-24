@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/products/{{productId}}
+  url: {{baseUrl}}/products/:productId
   body: none
   auth: none
+}
+
+params:path {
+  productId: 6168dc3d-cd97-4efa-ab97-6fa7da74bc71
 }

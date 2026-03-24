@@ -1,0 +1,9 @@
+export const env = {
+  APP_PORT: 3000,
+  NODE_ENV: "test",
+  AWS_REGION: "us-east-1",
+  AWS_ACCESS_KEY_ID: "test",
+  AWS_SECRET_ACCESS_KEY: "test",
+  DYNAMODB_ENDPOINT: "http://localhost:4566",
+  DYNAMODB_TABLE_NAME: "products"
+};
