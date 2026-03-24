@@ -1,0 +1,46 @@
+services:
+  localstack:
+    image: localstack/localstack:3.8.1
+    container_name: localstack-pc-parts
+    environment:
+      - SERVICES=dynamodb,cloudformation
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./localstack/init:/etc/localstack/init/ready.d
+      - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pc-parts-products-api
+    environment:
+      - APP_PORT=3000
+      - NODE_ENV=development
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+      - DYNAMODB_TABLE_NAME=products
+    ports:
+      - "3000:3000"
+    depends_on:
+      localstack:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: npm run dev
+
+volumes:
+  localstack-data:
