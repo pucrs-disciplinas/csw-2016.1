@@ -1,0 +1,18 @@
+{
+  "name": "auth-app",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm install && nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "keycloak-connect": "^26.1.1",
+    "nodemon": "^3.1.14"
+  }
+}
