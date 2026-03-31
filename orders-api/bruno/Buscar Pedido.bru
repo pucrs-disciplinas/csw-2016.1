@@ -1,0 +1,19 @@
+meta {
+  name: Buscar Pedido
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/orders/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: c1deb875-c6fa-4d2a-b21c-dc7397886a26
+}
+
+headers {
+  Content-Type: application/json
+}

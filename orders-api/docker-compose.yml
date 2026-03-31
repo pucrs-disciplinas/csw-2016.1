@@ -1,0 +1,77 @@
+services:
+  localstack:
+    image: localstack/localstack:3.8.1
+    container_name: localstack-pc-parts-orders
+    environment:
+      - SERVICES=sns,sqs,dynamodb,cloudformation
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    ports:
+      - "4567:4566"
+    volumes:
+      - ./localstack/init:/etc/localstack/init/ready.d
+      - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pc-parts-orders-api
+    environment:
+      - APP_PORT=3001
+      - NODE_ENV=development
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+      - DYNAMODB_TABLE_NAME=orders
+      - SNS_ENDPOINT=http://localstack:4566
+      - SNS_ORDERS_TOPIC_NAME=orders-created-topic
+      - INVENTORY_API_BASE_URL=http://host.docker.internal:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      localstack:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: npm run dev
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pc-parts-orders-worker
+    environment:
+      - NODE_ENV=development
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+      - DYNAMODB_TABLE_NAME=orders
+      - SNS_ENDPOINT=http://localstack:4566
+      - SQS_ORDERS_QUEUE_NAME=orders-created-queue
+      - WORKER_POLL_INTERVAL_MS=1000
+      - INVENTORY_API_BASE_URL=http://host.docker.internal:3000
+    depends_on:
+      localstack:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: npm run worker:dev
+
+volumes:
+  localstack-data:
